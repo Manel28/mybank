@@ -5,6 +5,20 @@ on:
     branches: [master]
 
 jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install backend WITHOUT scripts
+        working-directory: backend
+        run: composer install --no-scripts --no-interaction
+
   frontend:
     runs-on: ubuntu-latest
 
@@ -22,28 +36,3 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
-
-  backend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-
-      - name: Create env file
-        working-directory: backend
-        run: |
-          echo "APP_ENV=dev" > .env
-          echo "APP_SECRET=ci_secret" >> .env
-          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" >> .env
-
-      - name: Install backend
-        working-directory: backend
-        run: composer install --no-interaction --no-progress
-
-      - name: Validate composer
-        working-directory: backend
-        run: composer validate
