@@ -15,9 +15,16 @@ jobs:
         with:
           php-version: '8.4'
 
-      - name: Install backend WITHOUT scripts
+      - name: Create backend env file
         working-directory: backend
-        run: composer install --no-scripts --no-interaction --no-progress
+        run: |
+          echo "APP_ENV=test" > .env
+          echo "APP_SECRET=test_secret" >> .env
+          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/test.db" >> .env
+
+      - name: Install backend
+        working-directory: backend
+        run: composer install --no-interaction --no-progress
 
   frontend:
     runs-on: ubuntu-latest
