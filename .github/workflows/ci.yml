@@ -11,17 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install frontend dependencies
+      - name: Install frontend
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Build frontend
         working-directory: frontend
@@ -31,15 +29,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
 
-      - name: Install backend dependencies
+      - name: Create env file
+        working-directory: backend
+        run: |
+          echo 'APP_ENV=dev' > .env
+          echo 'APP_SECRET=ci_secret' >> .env
+          echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"' >> .env
+
+      - name: Install backend
         working-directory: backend
         run: composer install --no-interaction --no-progress
 
