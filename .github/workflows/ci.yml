@@ -3,8 +3,6 @@ name: CI MyBank
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 
 jobs:
   frontend:
@@ -38,9 +36,9 @@ jobs:
       - name: Create env file
         working-directory: backend
         run: |
-          echo 'APP_ENV=dev' > .env
-          echo 'APP_SECRET=ci_secret' >> .env
-          echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"' >> .env
+          echo "APP_ENV=dev" > .env
+          echo "APP_SECRET=ci_secret" >> .env
+          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" >> .env
 
       - name: Install backend
         working-directory: backend
