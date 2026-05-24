@@ -1,68 +1,39 @@
 import { useState } from 'react';
 
-function ExpenseForm({ onAdd }) {
-  const [label, setLabel] = useState('');
-  const [amount, setAmount] = useState('');
-  const [date, setDate] = useState('');
-  const [category, setCategory] = useState('');
+function ExpenseForm({ onCreate }) {
+  const [form, setForm] = useState({
+    label: '',
+    amount: '',
+    date: '',
+    category: '',
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleChange = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+  };
 
-    fetch('http://localhost:8000/api/expenses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        label,
-        amount: parseFloat(amount),
-        date,
-        category,
-      }),
-    })
-      .then(() => {
-        onAdd(); // recharge la liste
-        setLabel('');
-        setAmount('');
-        setDate('');
-        setCategory('');
-      })
-      .catch(console.error);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log('ADD CLICKED', form);
+
+    await onCreate({
+      label: form.label,
+      amount: Number(form.amount),
+      date: form.date,
+      category: form.category,
+    });
+
+    setForm({ label: '', amount: '', date: '', category: '' });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Add Expense</h2>
 
-      <input
-        type="text"
-        placeholder="Label"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        required
-      />
-
-      <input
-        type="number"
-        placeholder="Amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        required
-      />
-
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        required
-      />
-
-      <input
-        type="text"
-        placeholder="Category"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        required
-      />
+      <input name="label" placeholder="Label" value={form.label} onChange={handleChange} required />
+      <input name="amount" type="number" placeholder="Amount" value={form.amount} onChange={handleChange} required />
+      <input name="date" type="date" value={form.date} onChange={handleChange} required />
+      <input name="category" placeholder="Category" value={form.category} onChange={handleChange} required />
 
       <button type="submit">Add</button>
     </form>

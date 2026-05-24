@@ -45,6 +45,27 @@ class ExpenseController extends AbstractController
         $em->persist($expense);
         $em->flush();
 
-        return $this->json(['message' => 'Expense created'], 201);
+        return $this->json([
+            'id' => $expense->getId(),
+            'label' => $expense->getLabel(),
+            'amount' => $expense->getAmount(),
+            'date' => $expense->getDate()->format('Y-m-d'),
+            'category' => $expense->getCategory(),
+        ], 201);
+    }
+
+    #[Route('/api/expenses/{id}', name: 'api_expenses_delete', methods: ['DELETE'])]
+    public function delete(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $expense = $em->getRepository(Expense::class)->find($id);
+
+        if (!$expense) {
+            return $this->json(['error' => 'Expense not found'], 404);
+        }
+
+        $em->remove($expense);
+        $em->flush();
+
+        return $this->json(['message' => 'Expense deleted'], 200);
     }
 }

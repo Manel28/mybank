@@ -1,28 +1,30 @@
 import { useEffect, useState } from 'react';
-import ExpenseList from '../components/ExpenseList';
 import ExpenseForm from '../components/ExpenseForm';
-import { getExpenses } from '../services/expenseApi';
+import ExpenseList from '../components/ExpenseList';
+import { createExpense, deleteExpense, getExpenses } from '../api/expenseApi';
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
 
-  const loadExpenses = () => {
-    getExpenses()
-      .then(setExpenses)
-      .catch(console.error);
+  useEffect(() => {
+    getExpenses().then(setExpenses).catch(console.error);
+  }, []);
+
+  const handleCreate = async (expense) => {
+    const createdExpense = await createExpense(expense);
+    setExpenses((current) => [...current, createdExpense]);
   };
 
-  useEffect(() => {
-    loadExpenses();
-  }, []);
+  const handleDelete = async (id) => {
+    await deleteExpense(id);
+    setExpenses((current) => current.filter((expense) => expense.id !== id));
+  };
 
   return (
     <main>
       <h1>My Expenses</h1>
-
-      <ExpenseForm onAdd={loadExpenses} />
-
-      <ExpenseList expenses={expenses} />
+      <ExpenseForm onCreate={handleCreate} />
+      <ExpenseList expenses={expenses} onDelete={handleDelete} />
     </main>
   );
 }
