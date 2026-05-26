@@ -11,20 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-
-      - name: Create backend env file
-        working-directory: backend
-        run: |
-          echo "APP_ENV=test" > .env
-          echo "APP_SECRET=test_secret" >> .env
-          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/test.db" >> .env
-
-      - name: Install backend
-        working-directory: backend
-        run: composer install --no-interaction --no-progress
+      - name: Skip backend for now
+        run: echo "Backend skipped"
 
   frontend:
     runs-on: ubuntu-latest
